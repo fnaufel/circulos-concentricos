@@ -1,0 +1,416 @@
+---
+title: Círculos concêntricos em R
+subtitle: Classificação
+author: "Fernando Náufel"
+date: now
+date-format: "DD/MM/YYYY HH:mm"
+
+# bibliography: bibliography.bib
+# csl: universidade-do-porto-faculdade-de-engenharia-chicago-pt-crono.csl
+
+format:
+  html:
+    toc: true  
+    toc-depth: 3
+    number-depth: 3
+    theme: 
+      - journal
+      - _custom.scss
+    link-external-icon: true
+    link-external-newwindow: true
+    link-external-filter: ^(?:http:|https:)\/\/fnaufel\.github\.io
+    df-print: paged
+---
+
+{{< include _math.qmd >}}
+
+# Setup
+
+```{r setup}
+source('_setup.R')
+```
+
+
+# Gerar dados
+
+```{r}
+gerar_pontos <- function(
+  n_classes = 3,
+  largura = 3,
+  dp_classe = .5,
+  densidade_angulos = 60,
+  seed = 12345
+) {
+
+  set.seed(12345)
+  raios <- seq(largura, n_classes*largura, by = largura)
+  
+  # Mais ângulos para círculos com raios maiores
+  angulos <- raios %>% 
+    map(
+      ~seq(0, 359, length.out = densidade_angulos * .x)
+    )
+  
+  df_pontos <- raios %>% 
+    map2(
+      angulos,
+      ~expand_grid(classe = .x, angulo = .y)
+    ) %>% 
+    list_rbind()
+  
+  n_pontos <- nrow(df_pontos)
+  
+  df_pontos %>% 
+    mutate(
+      raio = classe + rnorm(n_pontos, sd = dp_classe),
+      classe = factor(classe),
+      x1 = raio * cos(angulo * pi / 180),
+      x2 = raio * sin(angulo * pi / 180)
+    )
+
+}
+```
+
+```{r}
+df_pontos <- gerar_pontos()
+
+df_pontos %>% 
+  ggplot() +
+    geom_point(aes(x1, x2, color = classe), alpha = 0.7) +
+    guides(color = 'none') +
+    coord_fixed()
+```
+
+
+# Split
+
+```{r}
+divisao_inicial <- initial_split(df_pontos, strata = classe)
+treino <- training(divisao_inicial)
+teste <- testing(divisao_inicial)
+```
+
+```{r}
+treino %>% dfSummary() %>% print(method = 'render')
+```
+
+```{r}
+teste %>% dfSummary() %>% print(method = 'render')
+```
+
+
+# Keras manualmente
+
+## Rede
+
+```{r}
+library(keras)
+```
+
+```{r}
+n_hidden <- 3
+n_classes <- 3
+
+rede <- keras_model_sequential() %>% 
+  layer_dense(n_hidden, activation = 'relu', input_shape = 2) %>% 
+  layer_dense(n_classes, activation = 'softmax')
+
+rede
+```
+
+```{r}
+rede %>% compile(
+  optimizer = optimizer_rmsprop(),  # Optimizer
+  # Loss function to minimize
+  loss = loss_categorical_crossentropy(),
+  # List of metrics to monitor
+  metrics = list(metric_categorical_accuracy()),
+)
+```
+
+## Treinar
+
+```{r}
+treino_matriz <- matrix(
+  c(treino$x1, treino$x2),
+  ncol = 2,
+  dimnames = list(NULL, c('x1', 'x2'))
+) 
+  
+treino_targets <- treino$classe %>% 
+  to_categorical() %>% 
+  subset(select = c(4, 7, 10))
+```
+
+```{r}
+historia <- rede %>% 
+  fit(
+    treino_matriz,
+    treino_targets,
+    batch_size = 256,
+    epochs = 500
+  )
+```
+
+## Testar
+
+```{r}
+teste_matriz <- matrix(
+  c(teste$x1, teste$x2),
+  ncol = 2,
+  dimnames = list(NULL, c('x1', 'x2'))
+) 
+  
+teste_targets <- teste$classe %>% 
+  to_categorical() %>% 
+  subset(select = c(4, 7, 10))
+```
+
+
+```{r}
+resultados <- rede %>% 
+  evaluate(
+    teste_matriz,
+    teste_targets,
+    batch_size = 256
+  )
+```
+
+```{r}
+resultados
+```
+
+
+## Treinar em tudo
+
+```{r}
+tudo_matriz <- matrix(
+  c(df_pontos$x1, df_pontos$x2),
+  ncol = 2,
+  dimnames = list(NULL, c('x1', 'x2'))
+) 
+  
+tudo_targets <- df_pontos$classe %>% 
+  to_categorical() %>% 
+  subset(select = c(4, 7, 10))
+```
+
+```{r}
+rede %>% compile(
+  optimizer = optimizer_rmsprop(),  # Optimizer
+  # Loss function to minimize
+  loss = loss_categorical_crossentropy(),
+  # List of metrics to monitor
+  metrics = list(metric_categorical_accuracy()),
+)
+```
+
+```{r}
+historia <- rede %>% 
+  fit(
+    tudo_matriz,
+    tudo_targets,
+    batch_size = 256,
+    epochs = 500
+  )
+```
+
+
+## Prever em tudo
+
+```{r}
+preds <- rede %>% 
+  predict(
+    tudo_matriz,
+    batch_size = 256
+  )
+```
+
+```{r}
+df_preds <- preds %>% 
+  as_tibble() %>% 
+  rowwise() %>% 
+  mutate(
+    .pred = which.max(c_across(V1:V3)) * n_classes
+  ) %>% 
+  ungroup() %>% 
+  mutate(
+    .pred = factor(.pred, c(3, 6, 9))
+  )
+```
+
+```{r}
+df_preds <- df_pontos %>% 
+  cbind(df_preds)
+```
+
+```{r}
+df_preds %>% 
+  accuracy(classe, .pred)
+```
+
+```{r}
+df_preds %>% 
+  mutate(ok = classe == .pred) %>% 
+  ggplot() +
+    geom_point(aes(x1, x2, color = ok)) +
+    scale_color_manual(values = c('red', 'lightgray')) +
+    coord_fixed()
+```
+
+```{r}
+grid <- expand_grid(
+  x1 = seq(-10, 10, 0.1),
+  x2 = seq(-10, 10, 0.1)
+)
+
+grid_matriz <- grid %>% 
+  as.matrix()
+
+grid_cores <- rede %>% 
+  predict(
+    grid_matriz,
+    batch_size = 256
+  ) %>% 
+  as_tibble() %>% 
+  rowwise() %>% 
+  mutate(
+    .pred = which.max(c_across(V1:V3)) * n_classes
+  ) %>% 
+  ungroup() %>% 
+  mutate(
+    .pred = factor(.pred, c(3, 6, 9)),
+  )
+```
+
+```{r}
+df_cores <- 
+  grid %>% 
+  cbind(grid_cores)
+```
+
+```{r}
+df_cores %>% 
+  ggplot() +
+    geom_point(
+      aes(x1, x2, color = .pred),
+      alpha = .2,
+      size = .3
+    ) +
+    geom_point(
+      data = df_pontos,
+      aes(x1, x2, color = classe)
+    ) +
+    guides(color = 'none') +
+    coord_fixed()
+```
+
+
+# Workflow inicial
+
+```{r}
+# receita <- recipe(classe ~ x1 + x2, data = treino) %>%
+#   step_interact(~x1:x2)
+
+receita <- recipe(classe ~ x1 + x2, data = treino)
+
+wf <- workflow() %>% 
+  add_recipe(receita)
+
+wf
+```
+
+
+# Regressão multinomial
+
+```{r}
+show_engines("multinom_reg")
+```
+
+
+
+## glmnet via parsnip
+
+```{r}
+glm_model <- multinom_reg(engine = 'glmnet', penalty = 0.1)
+glm_wf <- wf %>% 
+  add_model(glm_model)
+  
+glm_wf
+```
+
+```{r}
+glm_fit <- glm_wf %>% 
+  fit(treino)
+```
+
+```{r}
+glm_res_treino <- glm_fit %>% 
+  augment(treino)
+```
+
+```{r}
+glm_res_treino %>% 
+  accuracy(classe, .pred_class)
+```
+
+```{r}
+glm_fit %>% 
+  extract_fit_engine() %>% 
+  autoplot()
+```
+
+```{r}
+teste %>% 
+  bind_cols(predict(glm_fit, teste)) %>% 
+  accuracy(classe, .pred_class)
+```
+
+
+## keras via parsnip
+
+```{r}
+keras_model <- multinom_reg(engine = 'keras', penalty = 0.1)
+keras_wf <- wf %>% 
+  add_model(keras_model)
+  
+keras_wf
+```
+
+```{r}
+keras_fit <- keras_wf %>% 
+  fit(treino)
+```
+
+```{r cache=TRUE}
+keras_fit
+```
+
+
+```{r}
+keras_res_treino <- keras_fit %>% 
+  augment(treino)
+```
+
+```{r}
+keras_res_treino %>% 
+  accuracy(classe, .pred_class)
+```
+
+```{r}
+teste %>% 
+  bind_cols(predict(keras_fit, teste)) %>% 
+  accuracy(classe, .pred_class)
+```
+
+::: {.callout-warning}
+
+## Só um neurônio na camada oculta!
+
+Esta *engine* constrói uma rede neural com uma única camada oculta, consistindo de um único neurônio.
+
+Não consigo mudar número de épocas etc.
+
+Inútil, aqui.
+
+:::

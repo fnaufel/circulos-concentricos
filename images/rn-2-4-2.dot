@@ -1,0 +1,45 @@
+digraph {
+
+  rankdir = LR;
+  ranksep = 4;
+  nodesep = 1.5;
+  ordering = out;
+  splines = false;
+
+  node [shape = circle fontsize = 18];
+  edge [
+    fontsize = 14
+    labelfloat = true
+    labeldistance = 8
+  ];
+
+  x1 [label = < <i>x<sub>1</sub></i> >]
+  x2 [label = < <i>x<sub>2</sub></i> >]
+  
+  A1 [label = < <i>A<sub>1</sub></i> >]
+  A2 [label = < <i>A<sub>2</sub></i> >]
+  A3 [label = < <i>A<sub>3</sub></i> >]
+  A4 [label = < <i>A<sub>4</sub></i> >]
+
+  C1 [label = < <i>C<sub>1</sub></i> >]
+  C2 [label = < <i>C<sub>2</sub></i> >]
+
+  x1 -> A1 [headlabel = < <i>w<sub>11</sub></i> > labelangle = -10] 
+  x2 -> A1 [headlabel = < <i>w<sub>12</sub></i> > labelangle = -10]
+  x1 -> A2 [headlabel = < <i>w<sub>21</sub></i> > labelangle = -10]
+  x2 -> A2 [headlabel = < <i>w<sub>22</sub></i> > labelangle = -10]
+  x1 -> A3 [headlabel = < <i>w<sub>31</sub></i> > labelangle = -10]
+  x2 -> A3 [headlabel = < <i>w<sub>32</sub></i> > labelangle = -10]
+  x1 -> A4 [headlabel = < <i>w<sub>41</sub></i> > labelangle = -10]
+  x2 -> A4 [headlabel = < <i>w<sub>42</sub></i> > labelangle = -10]
+
+  A1 -> C1 [taillabel = < <i>w'<sub>11</sub></i> > labelangle = 10] 
+  A1 -> C2 [taillabel = < <i>w'<sub>12</sub></i> > labelangle = 10] 
+  A2 -> C1 [taillabel = < <i>w'<sub>21</sub></i> > labelangle = 10] 
+  A2 -> C2 [taillabel = < <i>w'<sub>22</sub></i> > labelangle = 10] 
+  A3 -> C1 [taillabel = < <i>w'<sub>31</sub></i> > labelangle = 10] 
+  A3 -> C2 [taillabel = < <i>w'<sub>32</sub></i> > labelangle = 10] 
+  A4 -> C1 [taillabel = < <i>w'<sub>41</sub></i> > labelangle = 10] 
+  A4 -> C2 [taillabel = < <i>w'<sub>42</sub></i> > labelangle = 10] 
+
+}

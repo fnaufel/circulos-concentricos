@@ -4,6 +4,7 @@ subtitle: Classificação
 author: "Fernando Náufel"
 date: now
 date-format: "DD/MM/YYYY HH:mm"
+lang: pt
 
 # bibliography: bibliography.bib
 # csl: universidade-do-porto-faculdade-de-engenharia-chicago-pt-crono.csl
@@ -309,4 +310,10 @@ plot_cores <- function(
 ```{r}
 plot_cores(df_pontos, rede)
 ```
+
+# Pesos e equações
+
+A rede tem a seguinte estrutura:
+
+![](images/rn-2-4-2.png){fig-alt="rede" width=100% fig-align="center"}
 

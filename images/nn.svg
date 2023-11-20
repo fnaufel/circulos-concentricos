@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1446"
+   height="727"
+   style="cursor: move;"
+   version="1.1"
+   id="svg55"
+   sodipodi:docname="nn.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview57"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.91147994"
+     inkscape:cx="687.3437"
+     inkscape:cy="363.69423"
+     inkscape:window-width="1920"
+     inkscape:window-height="1040"
+     inkscape:window-x="0"
+     inkscape:window-y="40"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg55" />
+  <g
+     transform="matrix(3.1271581,0,0,3.2353605,-1638.0044,-760.78777)"
+     id="g48">
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="M 566,321.5 H 755"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path2" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 566,321.5 189,52"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path4" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 566,321.5 189,104"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path6" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 566,373.5 189,-52"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path8" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="M 566,373.5 H 755"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path10" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 566,373.5 189,52"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path12" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 755,269.5 189,52"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path14" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 755,269.5 189,104"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path16" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="M 755,321.5 H 944"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path18" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 755,321.5 189,52"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path20" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 755,373.5 189,-52"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path22" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="M 755,373.5 H 944"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path24" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 755,425.5 189,-104"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path26" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 755,425.5 189,-52"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path28" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 566,321.5 189,-52"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path30" />
+    <path
+       class="link"
+       marker-end="url(#arrow)"
+       d="m 566,373.5 189,-104"
+       style="fill:none;stroke:#505050;stroke-width:0.5;stroke-opacity:1"
+       id="path32" />
+    <circle
+       r="16"
+       class="node"
+       id="0_0"
+       cx="566"
+       cy="321.5"
+       style="fill:#ffffff;stroke:#333333" />
+    <circle
+       r="16"
+       class="node"
+       id="0_1"
+       cx="566"
+       cy="373.5"
+       style="fill:#ffffff;stroke:#333333" />
+    <circle
+       r="16"
+       class="node"
+       id="1_0"
+       cx="755"
+       cy="269.5"
+       style="fill:#ffffff;stroke:#333333" />
+    <circle
+       r="16"
+       class="node"
+       id="1_1"
+       cx="755"
+       cy="321.5"
+       style="fill:#ffffff;stroke:#333333" />
+    <circle
+       r="16"
+       class="node"
+       id="1_2"
+       cx="755"
+       cy="373.5"
+       style="fill:#ffffff;stroke:#333333" />
+    <circle
+       r="16"
+       class="node"
+       id="1_3"
+       cx="755"
+       cy="425.5"
+       style="fill:#ffffff;stroke:#333333" />
+    <circle
+       r="16"
+       class="node"
+       id="2_0"
+       cx="944"
+       cy="321.5"
+       style="fill:#ffffff;stroke:#333333" />
+    <circle
+       r="16"
+       class="node"
+       id="2_1"
+       cx="944"
+       cy="373.5"
+       style="fill:#ffffff;stroke:#333333" />
+    <text
+       class="text"
+       dy="0.34999999em"
+       x="531"
+       y="477.5"
+       style="font-size:12px"
+       id="text42" />
+    <text
+       class="text"
+       dy="0.34999999em"
+       x="720"
+       y="477.5"
+       style="font-size:12px"
+       id="text44" />
+    <text
+       class="text"
+       dy="0.34999999em"
+       x="909"
+       y="477.5"
+       style="font-size:12px"
+       id="text46" />
+  </g>
+  <defs
+     id="defs53">
+    <marker
+       id="arrow"
+       viewBox="0 -5 10 10"
+       markerWidth="7"
+       markerHeight="7"
+       orient="auto"
+       refX="56.8">
+      <path
+         d="M0,-5L10,0L0,5"
+         style="stroke: rgb(80, 80, 80); fill: rgb(80, 80, 80);"
+         id="path50" />
+    </marker>
+  </defs>
+</svg>

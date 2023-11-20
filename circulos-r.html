@@ -94,6 +94,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#treinar-em-tudo" id="toc-treinar-em-tudo" class="nav-link" data-scroll-target="#treinar-em-tudo">Treinar em tudo</a></li>
   <li><a href="#prever-em-tudo" id="toc-prever-em-tudo" class="nav-link" data-scroll-target="#prever-em-tudo">Prever em tudo</a></li>
   </ul></li>
+  <li><a href="#pesos-e-equações" id="toc-pesos-e-equações" class="nav-link" data-scroll-target="#pesos-e-equações">Pesos e equações</a></li>
   </ul>
 </nav>
 </div>
@@ -119,7 +120,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">20/11/2023 15:40</p>
+      <p class="date">20/11/2023 20:07</p>
     </div>
   </div>
   
@@ -334,14 +335,14 @@ ________________________________________________________________________________
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">batch_size =</span> <span class="dv">256</span></span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>1/1 - 0s - loss: 0.3924 - categorical_accuracy: 0.9407 - 100ms/epoch - 100ms/step</code></pre>
+<pre><code>1/1 - 0s - loss: 0.2643 - categorical_accuracy: 0.9185 - 98ms/epoch - 98ms/step</code></pre>
 </div>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>resultados</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                loss categorical_accuracy 
-           0,3924115            0,9407408 </code></pre>
+           0,2642968            0,9185185 </code></pre>
 </div>
 </div>
 </section>
@@ -387,7 +388,7 @@ ________________________________________________________________________________
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">batch_size =</span> <span class="dv">256</span></span>
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>3/3 - 0s - 51ms/epoch - 17ms/step</code></pre>
+<pre><code>3/3 - 0s - 50ms/epoch - 17ms/step</code></pre>
 </div>
 </div>
 <div class="cell" data-layout-align="center">
@@ -419,7 +420,7 @@ ________________________________________________________________________________
 
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":[".metric"],"name":[1],"type":["chr"],"align":["left"]},{"label":[".estimator"],"name":[2],"type":["chr"],"align":["left"]},{"label":[".estimate"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"accuracy","2":"binary","3":"0,9833333"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[".metric"],"name":[1],"type":["chr"],"align":["left"]},{"label":[".estimator"],"name":[2],"type":["chr"],"align":["left"]},{"label":[".estimate"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"accuracy","2":"binary","3":"0,9962963"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -494,7 +495,7 @@ ________________________________________________________________________________
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cores</span>(df_pontos, rede)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>23/23 - 0s - 31ms/epoch - 1ms/step</code></pre>
+<pre><code>23/23 - 0s - 32ms/epoch - 1ms/step</code></pre>
 </div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -505,6 +506,15 @@ ________________________________________________________________________________
 </div>
 </div>
 </section>
+</section>
+<section id="pesos-e-equações" class="level1">
+<h1>Pesos e equações</h1>
+<p>A rede tem a seguinte estrutura:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/rn-2-4-2.png" class="img-fluid figure-img" style="width:100.0%" alt="rede"></p>
+</figure>
+</div>
 </section>
 
 </main>

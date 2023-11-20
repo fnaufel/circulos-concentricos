@@ -42,7 +42,9 @@ gerar_pontos <- function(
   seed = 12345
 ) {
 
-  set.seed(12345)
+  set.seed(seed)
+  
+  # Um raio para cada classe
   raios <- seq(largura, n_classes*largura, by = largura)
   
   # Mais ângulos para círculos com raios maiores
@@ -51,7 +53,8 @@ gerar_pontos <- function(
       ~seq(0, 359, length.out = densidade_angulos * .x)
     )
   
-  df_pontos <- raios %>% 
+  # classe vai de 0 a n_classes - 1
+  df_pontos <- 0:(n_classes - 1) %>% 
     map2(
       angulos,
       ~expand_grid(classe = .x, angulo = .y)
@@ -62,7 +65,8 @@ gerar_pontos <- function(
   
   df_pontos %>% 
     mutate(
-      raio = classe + rnorm(n_pontos, sd = dp_classe),
+      # classe vai de 0 a n_classes - 1
+      raio = (classe + 1) * largura + rnorm(n_pontos, sd = dp_classe),
       classe = factor(classe),
       x1 = raio * cos(angulo * pi / 180),
       x2 = raio * sin(angulo * pi / 180)
@@ -72,7 +76,9 @@ gerar_pontos <- function(
 ```
 
 ```{r}
-df_pontos <- gerar_pontos()
+n_classes <- 2
+
+df_pontos <- gerar_pontos(n_classes = n_classes, largura = 3, seed = 123)
 
 df_pontos %>% 
   ggplot() +
@@ -90,16 +96,7 @@ treino <- training(divisao_inicial)
 teste <- testing(divisao_inicial)
 ```
 
-```{r}
-treino %>% dfSummary() %>% print(method = 'render')
-```
-
-```{r}
-teste %>% dfSummary() %>% print(method = 'render')
-```
-
-
-# Keras manualmente
+# Keras
 
 ## Rede
 
@@ -108,8 +105,7 @@ library(keras)
 ```
 
 ```{r}
-n_hidden <- 3
-n_classes <- 3
+n_hidden <- 4
 
 rede <- keras_model_sequential() %>% 
   layer_dense(n_hidden, activation = 'relu', input_shape = 2) %>% 
@@ -120,10 +116,8 @@ rede
 
 ```{r}
 rede %>% compile(
-  optimizer = optimizer_rmsprop(),  # Optimizer
-  # Loss function to minimize
+  optimizer = optimizer_rmsprop(),
   loss = loss_categorical_crossentropy(),
-  # List of metrics to monitor
   metrics = list(metric_categorical_accuracy()),
 )
 ```
@@ -131,15 +125,23 @@ rede %>% compile(
 ## Treinar
 
 ```{r}
-treino_matriz <- matrix(
-  c(treino$x1, treino$x2),
-  ncol = 2,
-  dimnames = list(NULL, c('x1', 'x2'))
-) 
+df2matrix <- function(df) {
   
-treino_targets <- treino$classe %>% 
-  to_categorical() %>% 
-  subset(select = c(4, 7, 10))
+  treino <- matrix(
+    c(df$x1, df$x2),
+    ncol = 2,
+    dimnames = list(NULL, c('x1', 'x2'))
+  )
+  
+  teste <- df$classe %>% to_categorical()
+  
+  list(treino, teste)
+  
+}
+```
+
+```{r}
+c(treino_matriz, treino_targets) %<-% df2matrix(treino)
 ```
 
 ```{r}
@@ -148,24 +150,21 @@ historia <- rede %>%
     treino_matriz,
     treino_targets,
     batch_size = 256,
-    epochs = 500
+    epochs = 500,
+    verbose = 0
   )
 ```
+
+```{r}
+plot(historia)
+```
+
 
 ## Testar
 
 ```{r}
-teste_matriz <- matrix(
-  c(teste$x1, teste$x2),
-  ncol = 2,
-  dimnames = list(NULL, c('x1', 'x2'))
-) 
-  
-teste_targets <- teste$classe %>% 
-  to_categorical() %>% 
-  subset(select = c(4, 7, 10))
+c(teste_matriz, teste_targets) %<-% df2matrix(teste)
 ```
-
 
 ```{r}
 resultados <- rede %>% 
@@ -184,24 +183,14 @@ resultados
 ## Treinar em tudo
 
 ```{r}
-tudo_matriz <- matrix(
-  c(df_pontos$x1, df_pontos$x2),
-  ncol = 2,
-  dimnames = list(NULL, c('x1', 'x2'))
-) 
-  
-tudo_targets <- df_pontos$classe %>% 
-  to_categorical() %>% 
-  subset(select = c(4, 7, 10))
+c(tudo_matriz, tudo_targets) %<-% df2matrix(df_pontos)
 ```
 
 ```{r}
 rede %>% compile(
-  optimizer = optimizer_rmsprop(),  # Optimizer
-  # Loss function to minimize
+  optimizer = optimizer_rmsprop(),
   loss = loss_categorical_crossentropy(),
-  # List of metrics to monitor
-  metrics = list(metric_categorical_accuracy()),
+  metrics = list(metric_categorical_accuracy())
 )
 ```
 
@@ -211,8 +200,13 @@ historia <- rede %>%
     tudo_matriz,
     tudo_targets,
     batch_size = 256,
-    epochs = 500
+    epochs = 500,
+    verbose = 0
   )
+```
+
+```{r}
+plot(historia)
 ```
 
 
@@ -231,11 +225,12 @@ df_preds <- preds %>%
   as_tibble() %>% 
   rowwise() %>% 
   mutate(
-    .pred = which.max(c_across(V1:V3)) * n_classes
+    # classe vai de 0 a n_classes - 1
+    .pred = which.max(c_across(starts_with('V'))) - 1
   ) %>% 
   ungroup() %>% 
   mutate(
-    .pred = factor(.pred, c(3, 6, 9))
+    .pred = factor(.pred)
   )
 ```
 
@@ -251,166 +246,67 @@ df_preds %>%
 
 ```{r}
 df_preds %>% 
-  mutate(ok = classe == .pred) %>% 
+  mutate(correto = classe == .pred) %>% 
   ggplot() +
-    geom_point(aes(x1, x2, color = ok)) +
+    geom_point(aes(x1, x2, color = correto)) +
     scale_color_manual(values = c('red', 'lightgray')) +
     coord_fixed()
 ```
 
 ```{r}
-grid <- expand_grid(
-  x1 = seq(-10, 10, 0.1),
-  x2 = seq(-10, 10, 0.1)
-)
-
-grid_matriz <- grid %>% 
-  as.matrix()
-
-grid_cores <- rede %>% 
-  predict(
-    grid_matriz,
-    batch_size = 256
-  ) %>% 
-  as_tibble() %>% 
-  rowwise() %>% 
-  mutate(
-    .pred = which.max(c_across(V1:V3)) * n_classes
-  ) %>% 
-  ungroup() %>% 
-  mutate(
-    .pred = factor(.pred, c(3, 6, 9)),
+plot_cores <- function(
+  df,
+  rede
+) {
+  
+  minimo1 <- min(df$x1) %>% floor()
+  minimo2 <- min(df$x2) %>% floor()
+  maximo1 <- max(df$x1) %>% ceiling()
+  maximo2 <- max(df$x2) %>% ceiling()
+  
+  grid <- expand_grid(
+    x1 = seq(minimo1, maximo1, 0.1),
+    x2 = seq(minimo2, maximo2, 0.1)
   )
-```
+  
+  grid_matriz <- grid %>% 
+    as.matrix()
+  
+  grid_classes <- rede %>% 
+    predict(
+      grid_matriz,
+      batch_size = 1024
+    ) %>% 
+    as_tibble() %>% 
+    rowwise() %>% 
+    mutate(
+      # classe vai de 0 a n_classes - 1
+      .pred = which.max(c_across(starts_with('V'))) - 1
+    ) %>% 
+    ungroup() %>% 
+    mutate(
+      .pred = factor(.pred)
+    )
 
-```{r}
-df_cores <- 
   grid %>% 
-  cbind(grid_cores)
+    cbind(grid_classes) %>% 
+    ggplot() +
+      geom_point(
+        aes(x1, x2, color = .pred),
+        alpha = .2,
+        size = .4
+      ) +
+      geom_point(
+        data = df,
+        aes(x1, x2, color = classe)
+      ) +
+      guides(color = 'none') +
+      coord_fixed()
+    
+}
 ```
 
 ```{r}
-df_cores %>% 
-  ggplot() +
-    geom_point(
-      aes(x1, x2, color = .pred),
-      alpha = .2,
-      size = .3
-    ) +
-    geom_point(
-      data = df_pontos,
-      aes(x1, x2, color = classe)
-    ) +
-    guides(color = 'none') +
-    coord_fixed()
+plot_cores(df_pontos, rede)
 ```
 
-
-# Workflow inicial
-
-```{r}
-# receita <- recipe(classe ~ x1 + x2, data = treino) %>%
-#   step_interact(~x1:x2)
-
-receita <- recipe(classe ~ x1 + x2, data = treino)
-
-wf <- workflow() %>% 
-  add_recipe(receita)
-
-wf
-```
-
-
-# Regressão multinomial
-
-```{r}
-show_engines("multinom_reg")
-```
-
-
-
-## glmnet via parsnip
-
-```{r}
-glm_model <- multinom_reg(engine = 'glmnet', penalty = 0.1)
-glm_wf <- wf %>% 
-  add_model(glm_model)
-  
-glm_wf
-```
-
-```{r}
-glm_fit <- glm_wf %>% 
-  fit(treino)
-```
-
-```{r}
-glm_res_treino <- glm_fit %>% 
-  augment(treino)
-```
-
-```{r}
-glm_res_treino %>% 
-  accuracy(classe, .pred_class)
-```
-
-```{r}
-glm_fit %>% 
-  extract_fit_engine() %>% 
-  autoplot()
-```
-
-```{r}
-teste %>% 
-  bind_cols(predict(glm_fit, teste)) %>% 
-  accuracy(classe, .pred_class)
-```
-
-
-## keras via parsnip
-
-```{r}
-keras_model <- multinom_reg(engine = 'keras', penalty = 0.1)
-keras_wf <- wf %>% 
-  add_model(keras_model)
-  
-keras_wf
-```
-
-```{r}
-keras_fit <- keras_wf %>% 
-  fit(treino)
-```
-
-```{r cache=TRUE}
-keras_fit
-```
-
-
-```{r}
-keras_res_treino <- keras_fit %>% 
-  augment(treino)
-```
-
-```{r}
-keras_res_treino %>% 
-  accuracy(classe, .pred_class)
-```
-
-```{r}
-teste %>% 
-  bind_cols(predict(keras_fit, teste)) %>% 
-  accuracy(classe, .pred_class)
-```
-
-::: {.callout-warning}
-
-## Só um neurônio na camada oculta!
-
-Esta *engine* constrói uma rede neural com uma única camada oculta, consistindo de um único neurônio.
-
-Não consigo mudar número de épocas etc.
-
-Inútil, aqui.
-
-:::

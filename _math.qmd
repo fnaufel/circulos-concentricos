@@ -1,9 +1,17 @@
 
 ::: {.hidden}
 
+% Misc
 \providecommand{\reais}{\mathbb{R}}           % reais
 \DeclareMathOperator{\sen}{\text{sen}}        % seno
 \providecommand{\vet}[1]{\mathbf{#1}}         % vetor
+
+
+% NN
+\DeclareMathOperator{\relu}{\text{ReLU}}      % ReLU
+
+
+% AG
 \providecommand{\ve}[1]{\vet{e}_{#1}}         % vetor e_i
 \providecommand{\bl}[1]{\mathbf{#1}}          % blade
 \providecommand{\rev}[1]{\widetilde{#1}}      % reverso (til em cima)

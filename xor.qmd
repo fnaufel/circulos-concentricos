@@ -1,0 +1,158 @@
+---
+title: XOR
+subtitle: Classificação
+author: "Fernando Náufel"
+date: now
+date-format: "DD/MM/YYYY HH:mm"
+lang: pt
+
+# bibliography: bibliography.bib
+# csl: universidade-do-porto-faculdade-de-engenharia-chicago-pt-crono.csl
+
+format:
+  html:
+    toc: true  
+    toc-depth: 3
+    number-depth: 3
+    theme: 
+      - journal
+      - _custom.scss
+    link-external-icon: true
+    link-external-newwindow: true
+    link-external-filter: ^(?:http:|https:)\/\/fnaufel\.github\.io
+    df-print: paged
+---
+
+{{< include _math.qmd >}}
+
+# Setup
+
+```{r setup}
+source('_setup.R')
+```
+
+# Gráfico de XOR
+
+```{r}
+pontos <- tibble(
+  x1 = c(0, 0, 1, 1),
+  x2 = c(0, 1, 0, 1),
+  y = c('FALSO', 'VERDADEIRO', 'VERDADEIRO', 'FALSO')
+)
+
+pontos %>% 
+  ggplot(aes(x1, x2, color = y)) +
+    geom_point(size = 5) +
+    scale_x_continuous(breaks = 0:1, limits = c(-.5, 1.5)) +
+    scale_y_continuous(breaks = 0:1, limits = c(-.5, 1.5)) +
+    labs(
+      x = TeX('$x_1$'),
+      y = TeX('$x_2$'),
+      color = TeX('$x_1 \\otimes x_2 = {}$')
+    ) +
+    theme(legend.position = 'bottom')
+```
+
+
+# Rede neural
+
+## Equações
+
+$$
+y = \relu(x_1 - x_2) + \relu(x_2 - x_1)
+$$
+
+```{r}
+df <- 
+  tibble(
+    x1 = c(0, 0, 1, 1),
+    x2 = c(0, 1, 0, 1),
+    r1 = c(0, 0, 1, 0),
+    r2 = c(0, 1, 0, 0),
+    y  = c(0, 1, 1, 0)
+  )
+```
+
+```{r}
+library(gt)
+```
+
+```{r}
+df %>% 
+  gt() %>% 
+#  cols_width(everything() ~ pct(20)) %>% 
+  cols_label(
+    x1 = md('$x_1$'),
+    x2 = md('$x_2$'),
+    r1 = md('ReLU $(x_1 - x_2)$'),
+    r2 = md('ReLU $(x_2 - x_1)$'),
+    y  = md('$y = {}$ ReLU $(x_1 - x_2) + {}$ ReLU $(x_2 - x_1)$')
+  )
+```
+
+```{r}
+df %>% 
+  gt() %>% 
+  cols_align('center') %>%
+  cols_width(
+    starts_with('x') ~ pct(5),
+    starts_with('r') ~ pct(20),
+    everything()     ~ pct(50)
+  ) %>% 
+  cols_label(
+    x1 = md('$x_1$'),
+    x2 = md('$x_2$'),
+    r1 = md('$\\text{ReLU}(x_1 - x_2)$'),
+    r2 = md('$\\text{ReLU}(x_2 - x_1)$'),
+    y  = md('$y =\\text{ReLU}(x_1 - x_2) + \\text{ReLU}(x_2 - x_1)$')
+  ) %>% 
+  tab_style(
+    style = list(
+      cell_borders(sides = 'bottom', color = '#D3D3D3', weight = px(2)),
+      cell_borders(sides = c('t', 'l', 'r'), style = 'hidden')
+    ),
+    locations = cells_column_labels()
+  ) %>% 
+  tab_style(
+    style = cell_borders(color = '#D3D3D3', weight = px(2)),
+    locations = cells_body()
+  )
+```
+
+## RGL
+
+```{r}
+library(rgl)
+setupKnitr(autoprint = TRUE)
+```
+
+```{r}
+par3d(
+  cex = 1.5,
+  userMatrix = identityMatrix()  # View from above
+)
+
+plot3d(
+  df$x1, 
+  df$x2, 0, 
+  type = 's', 
+  col = df$y + 2, 
+  decorate = FALSE,
+  specular = 1
+)
+
+planes3d(0, 0, 1, alpha = 0.5, color = 'gray')
+
+axis3d('x--', nticks = 0)
+axis3d('x+-', labels = FALSE, nticks = 0)
+axis3d('y--', nticks = 0)
+axis3d('y+-', labels = FALSE, nticks = 0)
+
+title3d(
+  xlab = 'x1',
+  ylab = 'x2',
+  floating = FALSE
+)
+```
+
+
